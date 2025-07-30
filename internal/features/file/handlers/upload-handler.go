@@ -50,7 +50,10 @@ func UploadVideo(c echo.Context, client *ent.Client) error {
 	service := service.NewFileService(repo)
 	_, err = service.SaveFile(context.Background(), videoID)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Erro ao copiar arquivo"})
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Erro ao guardar video",
+			"msg":   err.Error(),
+		})
 	}
 	go tools.TranscodeToHLS(videoPath, videoFolder, videoID, client)
 
