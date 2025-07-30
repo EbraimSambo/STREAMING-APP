@@ -6,9 +6,5 @@ services:
       - "3344:3344"
     env_file:
       - .env
-    networks:
-      - backend
 
-networks:
-  backend:
-    external: true
+
