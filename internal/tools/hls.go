@@ -1,14 +1,18 @@
 package tools
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"stream/ent"
+	"stream/internal/features/file/repository"
+	"stream/internal/features/file/service"
 )
 
-func TranscodeToHLS(inputPath, outputDir string) {
+func TranscodeToHLS(inputPath, outputDir string, client *ent.Client) {
 	qualities := []struct {
 		Name    string
 		Width   int
@@ -77,4 +81,13 @@ func TranscodeToHLS(inputPath, outputDir string) {
 	}
 
 	log.Println("Processamento HLS concluído com sucesso para:", inputPath)
+
+	repo := repository.NewFileRepository(client)
+	service := service.NewFileService(repo)
+	result, err := service.SaveFile(context.Background(), masterPath)
+	if err != nil {
+		log.Printf("Erro ao salvar arquivo no banco de dados: %v", err)
+	}
+
+	log.Printf("Arquivo salvo no banco de dados com sucesso: %v", result)
 }

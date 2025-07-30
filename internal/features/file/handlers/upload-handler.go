@@ -6,13 +6,14 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"stream/ent"
 	"stream/internal/tools"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
-func UploadVideo(c echo.Context) error {
+func UploadVideo(c echo.Context, client *ent.Client) error {
 	file, err := c.FormFile("file")
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Arquivo é obrigatório"})
@@ -42,7 +43,7 @@ func UploadVideo(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Erro ao copiar arquivo"})
 	}
 
-	go tools.TranscodeToHLS(videoPath, videoFolder)
+	go tools.TranscodeToHLS(videoPath, videoFolder, client)
 
 	return c.JSON(http.StatusOK, map[string]string{
 		"message":  "Upload concluído com sucesso",

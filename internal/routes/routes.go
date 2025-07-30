@@ -8,7 +8,9 @@ import (
 )
 
 func Routes(e *echo.Echo, client *ent.Client) {
-	e.POST("/upload", handlers.UploadVideo)
+	e.POST("/upload", func(c echo.Context) error {
+		return handlers.UploadVideo(c, client)
+	})
 
 	// Serve os vídeos via rota /videos/<uuid>/<arquivo>
 	e.Static("/videos", "uploads")
