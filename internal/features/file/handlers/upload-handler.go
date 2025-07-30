@@ -1,12 +1,15 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 	"stream/ent"
+	"stream/internal/features/file/repository"
+	"stream/internal/features/file/service"
 	"stream/internal/tools"
 
 	"github.com/google/uuid"
@@ -43,6 +46,12 @@ func UploadVideo(c echo.Context, client *ent.Client) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Erro ao copiar arquivo"})
 	}
 
+	repo := repository.NewFileRepository(client)
+	service := service.NewFileService(repo)
+	_, err = service.SaveFile(context.Background(), videoID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Erro ao copiar arquivo"})
+	}
 	go tools.TranscodeToHLS(videoPath, videoFolder, client)
 
 	return c.JSON(http.StatusOK, map[string]string{
