@@ -8,5 +8,5 @@ services:
       - "3344:3344"
     env_file:
       - .env
-
-
+    volumes:
+      - ./uploads:/app/uploads  # <== Montagem de volume aqui
