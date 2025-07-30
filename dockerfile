@@ -16,6 +16,8 @@ WORKDIR /app
 
 RUN apk --no-cache add ca-certificates
 
+RUN apk add --no-cache ffmpeg
+
 # Copia o binário gerado
 COPY --from=builder /app/app .
 
