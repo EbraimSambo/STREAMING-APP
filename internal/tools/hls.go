@@ -1,15 +1,18 @@
 package tools
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"stream/ent"
+	"stream/internal/features/file/repository"
+	"stream/internal/features/file/service"
 )
 
-func TranscodeToHLS(inputPath, outputDir string, client *ent.Client) {
+func TranscodeToHLS(inputPath, outputDir string, fileId string, client *ent.Client) {
 	qualities := []struct {
 		Name    string
 		Width   int
@@ -78,4 +81,13 @@ func TranscodeToHLS(inputPath, outputDir string, client *ent.Client) {
 	}
 
 	log.Println("Processamento HLS concluído com sucesso para:", inputPath)
+
+	repo := repository.NewFileRepository(client)
+	service := service.NewFileService(repo)
+
+	_, err = service.ChangeVisibility(context.Background(), fileId)
+	if err != nil {
+		return
+	}
+
 }

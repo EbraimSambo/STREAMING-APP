@@ -12,6 +12,14 @@ func Routes(e *echo.Echo, client *ent.Client) {
 		return handlers.UploadVideo(c, client)
 	})
 
+	e.GET("/videos", func(c echo.Context) error {
+		return handlers.GetVideos(c, client)
+	})
+
+	e.GET("/videos/:fileRef", func(c echo.Context) error {
+		return handlers.GetVideo(c, client)
+	})
+
 	// Serve os vídeos via rota /videos/<uuid>/<arquivo>
 	e.Static("/videos", "uploads")
 }

@@ -3,6 +3,8 @@
 package file
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -13,6 +15,12 @@ const (
 	FieldID = "id"
 	// FieldFile holds the string denoting the file field in the database.
 	FieldFile = "file"
+	// FieldVisibility holds the string denoting the visibility field in the database.
+	FieldVisibility = "visibility"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
 	// Table holds the table name of the file in the database.
 	Table = "files"
 )
@@ -21,6 +29,9 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldFile,
+	FieldVisibility,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -36,6 +47,10 @@ func ValidColumn(column string) bool {
 var (
 	// FileValidator is a validator for the "file" field. It is called by the builders before save.
 	FileValidator func(string) error
+	// DefaultVisibility holds the default value on creation for the "visibility" field.
+	DefaultVisibility bool
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
 )
 
 // OrderOption defines the ordering options for the File queries.
@@ -49,4 +64,19 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 // ByFile orders the results by the file field.
 func ByFile(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldFile, opts...).ToFunc()
+}
+
+// ByVisibility orders the results by the visibility field.
+func ByVisibility(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVisibility, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }

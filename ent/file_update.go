@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"stream/ent/file"
 	"stream/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -37,6 +38,48 @@ func (fu *FileUpdate) SetFile(s string) *FileUpdate {
 func (fu *FileUpdate) SetNillableFile(s *string) *FileUpdate {
 	if s != nil {
 		fu.SetFile(*s)
+	}
+	return fu
+}
+
+// SetVisibility sets the "visibility" field.
+func (fu *FileUpdate) SetVisibility(b bool) *FileUpdate {
+	fu.mutation.SetVisibility(b)
+	return fu
+}
+
+// SetNillableVisibility sets the "visibility" field if the given value is not nil.
+func (fu *FileUpdate) SetNillableVisibility(b *bool) *FileUpdate {
+	if b != nil {
+		fu.SetVisibility(*b)
+	}
+	return fu
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (fu *FileUpdate) SetCreatedAt(t time.Time) *FileUpdate {
+	fu.mutation.SetCreatedAt(t)
+	return fu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (fu *FileUpdate) SetNillableCreatedAt(t *time.Time) *FileUpdate {
+	if t != nil {
+		fu.SetCreatedAt(*t)
+	}
+	return fu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (fu *FileUpdate) SetUpdatedAt(t time.Time) *FileUpdate {
+	fu.mutation.SetUpdatedAt(t)
+	return fu
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (fu *FileUpdate) SetNillableUpdatedAt(t *time.Time) *FileUpdate {
+	if t != nil {
+		fu.SetUpdatedAt(*t)
 	}
 	return fu
 }
@@ -98,6 +141,15 @@ func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := fu.mutation.File(); ok {
 		_spec.SetField(file.FieldFile, field.TypeString, value)
 	}
+	if value, ok := fu.mutation.Visibility(); ok {
+		_spec.SetField(file.FieldVisibility, field.TypeBool, value)
+	}
+	if value, ok := fu.mutation.CreatedAt(); ok {
+		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := fu.mutation.UpdatedAt(); ok {
+		_spec.SetField(file.FieldUpdatedAt, field.TypeTime, value)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, fu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{file.Label}
@@ -128,6 +180,48 @@ func (fuo *FileUpdateOne) SetFile(s string) *FileUpdateOne {
 func (fuo *FileUpdateOne) SetNillableFile(s *string) *FileUpdateOne {
 	if s != nil {
 		fuo.SetFile(*s)
+	}
+	return fuo
+}
+
+// SetVisibility sets the "visibility" field.
+func (fuo *FileUpdateOne) SetVisibility(b bool) *FileUpdateOne {
+	fuo.mutation.SetVisibility(b)
+	return fuo
+}
+
+// SetNillableVisibility sets the "visibility" field if the given value is not nil.
+func (fuo *FileUpdateOne) SetNillableVisibility(b *bool) *FileUpdateOne {
+	if b != nil {
+		fuo.SetVisibility(*b)
+	}
+	return fuo
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (fuo *FileUpdateOne) SetCreatedAt(t time.Time) *FileUpdateOne {
+	fuo.mutation.SetCreatedAt(t)
+	return fuo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (fuo *FileUpdateOne) SetNillableCreatedAt(t *time.Time) *FileUpdateOne {
+	if t != nil {
+		fuo.SetCreatedAt(*t)
+	}
+	return fuo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (fuo *FileUpdateOne) SetUpdatedAt(t time.Time) *FileUpdateOne {
+	fuo.mutation.SetUpdatedAt(t)
+	return fuo
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (fuo *FileUpdateOne) SetNillableUpdatedAt(t *time.Time) *FileUpdateOne {
+	if t != nil {
+		fuo.SetUpdatedAt(*t)
 	}
 	return fuo
 }
@@ -218,6 +312,15 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 	}
 	if value, ok := fuo.mutation.File(); ok {
 		_spec.SetField(file.FieldFile, field.TypeString, value)
+	}
+	if value, ok := fuo.mutation.Visibility(); ok {
+		_spec.SetField(file.FieldVisibility, field.TypeBool, value)
+	}
+	if value, ok := fuo.mutation.CreatedAt(); ok {
+		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := fuo.mutation.UpdatedAt(); ok {
+		_spec.SetField(file.FieldUpdatedAt, field.TypeTime, value)
 	}
 	_node = &File{config: fuo.config}
 	_spec.Assign = _node.assignValues

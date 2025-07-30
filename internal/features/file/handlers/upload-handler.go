@@ -52,7 +52,7 @@ func UploadVideo(c echo.Context, client *ent.Client) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Erro ao copiar arquivo"})
 	}
-	go tools.TranscodeToHLS(videoPath, videoFolder, client)
+	go tools.TranscodeToHLS(videoPath, videoFolder, videoID, client)
 
 	return c.JSON(http.StatusOK, map[string]string{
 		"message":  "Upload concluído com sucesso",

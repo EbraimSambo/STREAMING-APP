@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"stream/ent/file"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -25,6 +26,40 @@ func (fc *FileCreate) SetFile(s string) *FileCreate {
 	return fc
 }
 
+// SetVisibility sets the "visibility" field.
+func (fc *FileCreate) SetVisibility(b bool) *FileCreate {
+	fc.mutation.SetVisibility(b)
+	return fc
+}
+
+// SetNillableVisibility sets the "visibility" field if the given value is not nil.
+func (fc *FileCreate) SetNillableVisibility(b *bool) *FileCreate {
+	if b != nil {
+		fc.SetVisibility(*b)
+	}
+	return fc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (fc *FileCreate) SetCreatedAt(t time.Time) *FileCreate {
+	fc.mutation.SetCreatedAt(t)
+	return fc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (fc *FileCreate) SetNillableCreatedAt(t *time.Time) *FileCreate {
+	if t != nil {
+		fc.SetCreatedAt(*t)
+	}
+	return fc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (fc *FileCreate) SetUpdatedAt(t time.Time) *FileCreate {
+	fc.mutation.SetUpdatedAt(t)
+	return fc
+}
+
 // Mutation returns the FileMutation object of the builder.
 func (fc *FileCreate) Mutation() *FileMutation {
 	return fc.mutation
@@ -32,6 +67,7 @@ func (fc *FileCreate) Mutation() *FileMutation {
 
 // Save creates the File in the database.
 func (fc *FileCreate) Save(ctx context.Context) (*File, error) {
+	fc.defaults()
 	return withHooks(ctx, fc.sqlSave, fc.mutation, fc.hooks)
 }
 
@@ -57,6 +93,18 @@ func (fc *FileCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (fc *FileCreate) defaults() {
+	if _, ok := fc.mutation.Visibility(); !ok {
+		v := file.DefaultVisibility
+		fc.mutation.SetVisibility(v)
+	}
+	if _, ok := fc.mutation.CreatedAt(); !ok {
+		v := file.DefaultCreatedAt()
+		fc.mutation.SetCreatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (fc *FileCreate) check() error {
 	if _, ok := fc.mutation.File(); !ok {
@@ -66,6 +114,15 @@ func (fc *FileCreate) check() error {
 		if err := file.FileValidator(v); err != nil {
 			return &ValidationError{Name: "file", err: fmt.Errorf(`ent: validator failed for field "File.file": %w`, err)}
 		}
+	}
+	if _, ok := fc.mutation.Visibility(); !ok {
+		return &ValidationError{Name: "visibility", err: errors.New(`ent: missing required field "File.visibility"`)}
+	}
+	if _, ok := fc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "File.created_at"`)}
+	}
+	if _, ok := fc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "File.updated_at"`)}
 	}
 	return nil
 }
@@ -97,6 +154,18 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 		_spec.SetField(file.FieldFile, field.TypeString, value)
 		_node.File = value
 	}
+	if value, ok := fc.mutation.Visibility(); ok {
+		_spec.SetField(file.FieldVisibility, field.TypeBool, value)
+		_node.Visibility = value
+	}
+	if value, ok := fc.mutation.CreatedAt(); ok {
+		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := fc.mutation.UpdatedAt(); ok {
+		_spec.SetField(file.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
 	return _node, _spec
 }
 
@@ -118,6 +187,7 @@ func (fcb *FileCreateBulk) Save(ctx context.Context) ([]*File, error) {
 	for i := range fcb.builders {
 		func(i int, root context.Context) {
 			builder := fcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*FileMutation)
 				if !ok {

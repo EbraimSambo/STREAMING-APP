@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"stream/ent/file"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -17,7 +18,13 @@ type File struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// File holds the value of the "file" field.
-	File         string `json:"file,omitempty"`
+	File string `json:"file,omitempty"`
+	// Visibility holds the value of the "visibility" field.
+	Visibility bool `json:"visibility,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt    time.Time `json:"updated_at,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -26,10 +33,14 @@ func (*File) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case file.FieldVisibility:
+			values[i] = new(sql.NullBool)
 		case file.FieldID:
 			values[i] = new(sql.NullInt64)
 		case file.FieldFile:
 			values[i] = new(sql.NullString)
+		case file.FieldCreatedAt, file.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -56,6 +67,24 @@ func (f *File) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field file", values[i])
 			} else if value.Valid {
 				f.File = value.String
+			}
+		case file.FieldVisibility:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field visibility", values[i])
+			} else if value.Valid {
+				f.Visibility = value.Bool
+			}
+		case file.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				f.CreatedAt = value.Time
+			}
+		case file.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				f.UpdatedAt = value.Time
 			}
 		default:
 			f.selectValues.Set(columns[i], values[i])
@@ -95,6 +124,15 @@ func (f *File) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v, ", f.ID))
 	builder.WriteString("file=")
 	builder.WriteString(f.File)
+	builder.WriteString(", ")
+	builder.WriteString("visibility=")
+	builder.WriteString(fmt.Sprintf("%v", f.Visibility))
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(f.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(f.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

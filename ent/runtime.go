@@ -5,6 +5,7 @@ package ent
 import (
 	"stream/ent/file"
 	"stream/ent/schema"
+	"time"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -17,4 +18,12 @@ func init() {
 	fileDescFile := fileFields[0].Descriptor()
 	// file.FileValidator is a validator for the "file" field. It is called by the builders before save.
 	file.FileValidator = fileDescFile.Validators[0].(func(string) error)
+	// fileDescVisibility is the schema descriptor for visibility field.
+	fileDescVisibility := fileFields[1].Descriptor()
+	// file.DefaultVisibility holds the default value on creation for the visibility field.
+	file.DefaultVisibility = fileDescVisibility.Default.(bool)
+	// fileDescCreatedAt is the schema descriptor for created_at field.
+	fileDescCreatedAt := fileFields[2].Descriptor()
+	// file.DefaultCreatedAt holds the default value on creation for the created_at field.
+	file.DefaultCreatedAt = fileDescCreatedAt.Default.(func() time.Time)
 }
