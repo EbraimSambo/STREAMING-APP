@@ -52,7 +52,7 @@ func (r FileRepository) SaveFile(ctx context.Context, file string) (*string, err
 	return &newFile.File, nil
 }
 
-func (r FileRepository) ChangeVisibility(ctx context.Context, fileRef string) (*string, error) {
+func (r FileRepository) ChangeVisibility(ctx context.Context, videoID string) (*string, error) {
 	tx, err := r.Client.Tx(ctx)
 	if err != nil {
 		return nil, err
@@ -68,9 +68,8 @@ func (r FileRepository) ChangeVisibility(ctx context.Context, fileRef string) (*
 	_, err = tx.File.
 		Update().
 		Where(
-			file.File(fileRef),
+			file.File(videoID),
 		).
-		SetVisibility(true).
 		SetVisibility(true).
 		Save(ctx)
 
@@ -79,7 +78,7 @@ func (r FileRepository) ChangeVisibility(ctx context.Context, fileRef string) (*
 		return nil, err
 	}
 
-	return &fileRef, nil
+	return &videoID, nil
 
 }
 
