@@ -19,7 +19,8 @@ func (File) Fields() []ent.Field {
 		field.Bool("visibility").Default(false),
 		field.Time("created_at").
 			Default(time.Now),
-		field.Time("updated_at"),
+		field.Time("deleted_at").
+			Optional(),
 	}
 }
 

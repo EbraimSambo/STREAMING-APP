@@ -54,9 +54,17 @@ func (fc *FileCreate) SetNillableCreatedAt(t *time.Time) *FileCreate {
 	return fc
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (fc *FileCreate) SetUpdatedAt(t time.Time) *FileCreate {
-	fc.mutation.SetUpdatedAt(t)
+// SetDeletedAt sets the "deleted_at" field.
+func (fc *FileCreate) SetDeletedAt(t time.Time) *FileCreate {
+	fc.mutation.SetDeletedAt(t)
+	return fc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (fc *FileCreate) SetNillableDeletedAt(t *time.Time) *FileCreate {
+	if t != nil {
+		fc.SetDeletedAt(*t)
+	}
 	return fc
 }
 
@@ -121,9 +129,6 @@ func (fc *FileCreate) check() error {
 	if _, ok := fc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "File.created_at"`)}
 	}
-	if _, ok := fc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "File.updated_at"`)}
-	}
 	return nil
 }
 
@@ -162,9 +167,9 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
-	if value, ok := fc.mutation.UpdatedAt(); ok {
-		_spec.SetField(file.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
+	if value, ok := fc.mutation.DeletedAt(); ok {
+		_spec.SetField(file.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
 	}
 	return _node, _spec
 }

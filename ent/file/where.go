@@ -69,9 +69,9 @@ func CreatedAt(v time.Time) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldCreatedAt, v))
 }
 
-// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
-func UpdatedAt(v time.Time) predicate.File {
-	return predicate.File(sql.FieldEQ(FieldUpdatedAt, v))
+// DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldDeletedAt, v))
 }
 
 // FileEQ applies the EQ predicate on the "file" field.
@@ -189,44 +189,54 @@ func CreatedAtLTE(v time.Time) predicate.File {
 	return predicate.File(sql.FieldLTE(FieldCreatedAt, v))
 }
 
-// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
-func UpdatedAtEQ(v time.Time) predicate.File {
-	return predicate.File(sql.FieldEQ(FieldUpdatedAt, v))
+// DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
+func DeletedAtEQ(v time.Time) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
-func UpdatedAtNEQ(v time.Time) predicate.File {
-	return predicate.File(sql.FieldNEQ(FieldUpdatedAt, v))
+// DeletedAtNEQ applies the NEQ predicate on the "deleted_at" field.
+func DeletedAtNEQ(v time.Time) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldDeletedAt, v))
 }
 
-// UpdatedAtIn applies the In predicate on the "updated_at" field.
-func UpdatedAtIn(vs ...time.Time) predicate.File {
-	return predicate.File(sql.FieldIn(FieldUpdatedAt, vs...))
+// DeletedAtIn applies the In predicate on the "deleted_at" field.
+func DeletedAtIn(vs ...time.Time) predicate.File {
+	return predicate.File(sql.FieldIn(FieldDeletedAt, vs...))
 }
 
-// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
-func UpdatedAtNotIn(vs ...time.Time) predicate.File {
-	return predicate.File(sql.FieldNotIn(FieldUpdatedAt, vs...))
+// DeletedAtNotIn applies the NotIn predicate on the "deleted_at" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldDeletedAt, vs...))
 }
 
-// UpdatedAtGT applies the GT predicate on the "updated_at" field.
-func UpdatedAtGT(v time.Time) predicate.File {
-	return predicate.File(sql.FieldGT(FieldUpdatedAt, v))
+// DeletedAtGT applies the GT predicate on the "deleted_at" field.
+func DeletedAtGT(v time.Time) predicate.File {
+	return predicate.File(sql.FieldGT(FieldDeletedAt, v))
 }
 
-// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
-func UpdatedAtGTE(v time.Time) predicate.File {
-	return predicate.File(sql.FieldGTE(FieldUpdatedAt, v))
+// DeletedAtGTE applies the GTE predicate on the "deleted_at" field.
+func DeletedAtGTE(v time.Time) predicate.File {
+	return predicate.File(sql.FieldGTE(FieldDeletedAt, v))
 }
 
-// UpdatedAtLT applies the LT predicate on the "updated_at" field.
-func UpdatedAtLT(v time.Time) predicate.File {
-	return predicate.File(sql.FieldLT(FieldUpdatedAt, v))
+// DeletedAtLT applies the LT predicate on the "deleted_at" field.
+func DeletedAtLT(v time.Time) predicate.File {
+	return predicate.File(sql.FieldLT(FieldDeletedAt, v))
 }
 
-// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
-func UpdatedAtLTE(v time.Time) predicate.File {
-	return predicate.File(sql.FieldLTE(FieldUpdatedAt, v))
+// DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
+func DeletedAtLTE(v time.Time) predicate.File {
+	return predicate.File(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.File {
+	return predicate.File(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.File {
+	return predicate.File(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // And groups predicates with the AND operator between them.

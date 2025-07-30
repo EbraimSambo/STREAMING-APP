@@ -70,17 +70,23 @@ func (fu *FileUpdate) SetNillableCreatedAt(t *time.Time) *FileUpdate {
 	return fu
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (fu *FileUpdate) SetUpdatedAt(t time.Time) *FileUpdate {
-	fu.mutation.SetUpdatedAt(t)
+// SetDeletedAt sets the "deleted_at" field.
+func (fu *FileUpdate) SetDeletedAt(t time.Time) *FileUpdate {
+	fu.mutation.SetDeletedAt(t)
 	return fu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (fu *FileUpdate) SetNillableUpdatedAt(t *time.Time) *FileUpdate {
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (fu *FileUpdate) SetNillableDeletedAt(t *time.Time) *FileUpdate {
 	if t != nil {
-		fu.SetUpdatedAt(*t)
+		fu.SetDeletedAt(*t)
 	}
+	return fu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (fu *FileUpdate) ClearDeletedAt() *FileUpdate {
+	fu.mutation.ClearDeletedAt()
 	return fu
 }
 
@@ -147,8 +153,11 @@ func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := fu.mutation.CreatedAt(); ok {
 		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)
 	}
-	if value, ok := fu.mutation.UpdatedAt(); ok {
-		_spec.SetField(file.FieldUpdatedAt, field.TypeTime, value)
+	if value, ok := fu.mutation.DeletedAt(); ok {
+		_spec.SetField(file.FieldDeletedAt, field.TypeTime, value)
+	}
+	if fu.mutation.DeletedAtCleared() {
+		_spec.ClearField(file.FieldDeletedAt, field.TypeTime)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, fu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -212,17 +221,23 @@ func (fuo *FileUpdateOne) SetNillableCreatedAt(t *time.Time) *FileUpdateOne {
 	return fuo
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (fuo *FileUpdateOne) SetUpdatedAt(t time.Time) *FileUpdateOne {
-	fuo.mutation.SetUpdatedAt(t)
+// SetDeletedAt sets the "deleted_at" field.
+func (fuo *FileUpdateOne) SetDeletedAt(t time.Time) *FileUpdateOne {
+	fuo.mutation.SetDeletedAt(t)
 	return fuo
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (fuo *FileUpdateOne) SetNillableUpdatedAt(t *time.Time) *FileUpdateOne {
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (fuo *FileUpdateOne) SetNillableDeletedAt(t *time.Time) *FileUpdateOne {
 	if t != nil {
-		fuo.SetUpdatedAt(*t)
+		fuo.SetDeletedAt(*t)
 	}
+	return fuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (fuo *FileUpdateOne) ClearDeletedAt() *FileUpdateOne {
+	fuo.mutation.ClearDeletedAt()
 	return fuo
 }
 
@@ -319,8 +334,11 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 	if value, ok := fuo.mutation.CreatedAt(); ok {
 		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)
 	}
-	if value, ok := fuo.mutation.UpdatedAt(); ok {
-		_spec.SetField(file.FieldUpdatedAt, field.TypeTime, value)
+	if value, ok := fuo.mutation.DeletedAt(); ok {
+		_spec.SetField(file.FieldDeletedAt, field.TypeTime, value)
+	}
+	if fuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(file.FieldDeletedAt, field.TypeTime)
 	}
 	_node = &File{config: fuo.config}
 	_spec.Assign = _node.assignValues

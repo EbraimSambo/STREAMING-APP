@@ -19,8 +19,8 @@ const (
 	FieldVisibility = "visibility"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
-	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
-	FieldUpdatedAt = "updated_at"
+	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
+	FieldDeletedAt = "deleted_at"
 	// Table holds the table name of the file in the database.
 	Table = "files"
 )
@@ -31,7 +31,7 @@ var Columns = []string{
 	FieldFile,
 	FieldVisibility,
 	FieldCreatedAt,
-	FieldUpdatedAt,
+	FieldDeletedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -76,7 +76,7 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
 }
 
-// ByUpdatedAt orders the results by the updated_at field.
-func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+// ByDeletedAt orders the results by the deleted_at field.
+func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }

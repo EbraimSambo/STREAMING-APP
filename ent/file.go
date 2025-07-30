@@ -23,8 +23,8 @@ type File struct {
 	Visibility bool `json:"visibility,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt    time.Time `json:"updated_at,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt    time.Time `json:"deleted_at,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -39,7 +39,7 @@ func (*File) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case file.FieldFile:
 			values[i] = new(sql.NullString)
-		case file.FieldCreatedAt, file.FieldUpdatedAt:
+		case file.FieldCreatedAt, file.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -80,11 +80,11 @@ func (f *File) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				f.CreatedAt = value.Time
 			}
-		case file.FieldUpdatedAt:
+		case file.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				f.UpdatedAt = value.Time
+				f.DeletedAt = value.Time
 			}
 		default:
 			f.selectValues.Set(columns[i], values[i])
@@ -131,8 +131,8 @@ func (f *File) String() string {
 	builder.WriteString("created_at=")
 	builder.WriteString(f.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(f.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString("deleted_at=")
+	builder.WriteString(f.DeletedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }
