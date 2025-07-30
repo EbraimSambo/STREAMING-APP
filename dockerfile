@@ -1,9 +1,9 @@
 # Etapa de build (builder)
-FROM golang:1.22-alpine AS builder
+FROM golang:1.23-alpine AS builder
 
 WORKDIR /app
 
-# Copia os arquivos do projeto para dentro da imagem
+# Copia os arquivos do projeto
 COPY . .
 
 # Compila o binário Go
@@ -16,7 +16,7 @@ WORKDIR /app
 
 RUN apk --no-cache add ca-certificates
 
-# Copia o binário gerado na etapa de build
+# Copia o binário compilado
 COPY --from=builder /app/app .
 
 EXPOSE 3344
