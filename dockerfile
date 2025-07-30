@@ -1,28 +1,15 @@
-FROM golang:1.23 AS builder
-
-WORKDIR /app
-
-COPY go.mod go.sum ./
-RUN go mod download
-
-COPY . .
-
-RUN CGO_ENABLED=0 GOOS=linux go build -o app .
-
+# Etapa final
 FROM alpine:latest
 
-WORKDIR /app
-
-RUN apk add --no-cache ffmpeg
+WORKDIR /app 
 
 RUN apk --no-cache add ca-certificates
 
-COPY --from=builder /app/app .
+# Copia o binário gerado na etapa anterior
+COPY --from=builder /app/app . 
 
-RUN adduser -D -g '' appuser
-
-USER appuser
-
+# Expõe a porta usada pelo Fiber
 EXPOSE 3344
 
-CMD ["./app"]
+# Comando para iniciar a aplicação
+CMD ["./app"] # <--- Isso executará /app/app porque o WORKDIR é /a
