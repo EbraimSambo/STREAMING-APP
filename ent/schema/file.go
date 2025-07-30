@@ -17,9 +17,8 @@ func (File) Fields() []ent.Field {
 	return []ent.Field{
 		field.Text("file").NotEmpty(),
 		field.Bool("visibility").Default(false),
-		field.Time("created_at").Default(func() time.Time {
-			return time.Now()
-		}),
+		field.Time("created_at").
+			Default(time.Now),
 		field.Time("updated_at"),
 	}
 }
