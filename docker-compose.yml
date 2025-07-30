@@ -9,4 +9,4 @@ services:
     env_file:
       - .env
     volumes:
-      - ./uploads:/app/uploads  # <== Montagem de volume aqui
+      - /www/wwwroot/test/STREAMING-APP/uploads:/app/uploads

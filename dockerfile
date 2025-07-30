@@ -13,9 +13,6 @@ RUN go build -o app ./cmd
 FROM alpine:latest
 
 WORKDIR /app
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-
-USER appuser
 
 RUN apk --no-cache add ca-certificates
 
