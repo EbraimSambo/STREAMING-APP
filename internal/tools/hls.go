@@ -12,7 +12,7 @@ import (
 	"stream/internal/features/file/service"
 )
 
-func TranscodeToHLS(inputPath, outputDir string, fileId string, client *ent.Client) {
+func TranscodeToHLS(inputPath, outputDir string, videoId string, client *ent.Client) {
 	qualities := []struct {
 		Name    string
 		Width   int
@@ -85,9 +85,10 @@ func TranscodeToHLS(inputPath, outputDir string, fileId string, client *ent.Clie
 	repo := repository.NewFileRepository(client)
 	service := service.NewFileService(repo)
 
-	_, err = service.ChangeVisibility(context.Background(), fileId)
+	file, err := service.ChangeVisibility(context.Background(), videoId)
 	if err != nil {
 		return
 	}
 
+	log.Println("Video: ", file, videoId)
 }

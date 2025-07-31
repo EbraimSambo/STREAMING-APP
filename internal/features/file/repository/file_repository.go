@@ -78,6 +78,11 @@ func (r FileRepository) ChangeVisibility(ctx context.Context, videoID string) (*
 		return nil, err
 	}
 
+	if err := tx.Commit(); err != nil {
+		_ = tx.Rollback()
+		return nil, err
+	}
+
 	return &videoID, nil
 
 }
@@ -93,6 +98,9 @@ func (r *FileRepository) GetFolderFiles(d DataParamsFiles) (*core.Pagination[ent
 
 	total, err := d.Client.File.
 		Query().
+		Where(
+			file.VisibilityEQ(true),
+		).
 		Count(d.Ctx)
 
 	if err != nil {
@@ -103,6 +111,9 @@ func (r *FileRepository) GetFolderFiles(d DataParamsFiles) (*core.Pagination[ent
 		Query().
 		Limit(d.DataPagination.Limit).
 		Offset(offset).
+		Where(
+			file.VisibilityEQ(true),
+		).
 		Order(ent.Desc(file.FieldCreatedAt)).All(d.Ctx)
 
 	if err != nil {
@@ -139,5 +150,8 @@ func (r *FileRepository) GetFolderFiles(d DataParamsFiles) (*core.Pagination[ent
 }
 
 func (r *FileRepository) GetFile(ctx context.Context, fileRef string) (*ent.File, error) {
-	return r.Client.File.Query().Where(file.File(fileRef)).First(ctx)
+	return r.Client.File.Query().Where(
+		file.File(fileRef),
+		file.VisibilityEQ(true),
+	).First(ctx)
 }
