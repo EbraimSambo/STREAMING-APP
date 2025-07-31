@@ -16,7 +16,7 @@ func Routes(e *echo.Echo, client *ent.Client) {
 		return handlers.GetVideos(c, client)
 	})
 
-	e.GET("/videos/:fileRef", func(c echo.Context) error {
+	e.GET("/videos/single/:fileRef", func(c echo.Context) error {
 		return handlers.GetVideo(c, client)
 	})
 
