@@ -55,9 +55,27 @@ func TranscodeToHLS(inputPath, outputDir string, videoId string, client *ent.Cli
 			filepath.Join(outputPath, "index.m3u8"),
 		)
 
-		output, err := cmd.CombinedOutput()
+		progressLogger, err := NewProgressLogger(inputPath)
 		if err != nil {
-			log.Printf("Erro ao transcodificar para %s: %v\nSaída: %s", q.Name, err, string(output))
+			log.Printf("Failed to create progress logger: %v", err)
+			continue
+		}
+
+		stderr, err := cmd.StderrPipe()
+		if err != nil {
+			log.Printf("Erro ao obter o pipe de erro padrão para %s: %v", q.Name, err)
+			continue
+		}
+
+		if err := cmd.Start(); err != nil {
+			log.Printf("Erro ao iniciar a transcodificação para %s: %v", q.Name, err)
+			continue
+		}
+
+		go progressLogger.LogProgress(stderr)
+
+		if err := cmd.Wait(); err != nil {
+			log.Printf("Erro ao aguardar a transcodificação para %s: %v", q.Name, err)
 			continue
 		}
 
