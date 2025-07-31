@@ -8,13 +8,14 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"stream/ent"
 	"stream/internal/config"
 	"sync"
 )
 
 // TranscodeAndProcessVideo é o handler do job que executa todo o pipeline de processamento.
-func TranscodeAndProcessVideo(videoID, inputPath string, client *ent.Client, appConfig *config.Config) {
+func TranscodeAndProcessVideo(videoID, inputPath, fileName string, client *ent.Client, appConfig *config.Config) {
 	ctx := context.Background()
 
 	// 1. Atualiza o status para PROCESSING
@@ -40,7 +41,7 @@ func TranscodeAndProcessVideo(videoID, inputPath string, client *ent.Client, app
 
 	go func() {
 		defer wg.Done()
-		extractAndSaveMetadata(ctx, client, videoID, inputPath)
+		extractAndSaveMetadata(ctx, client, videoID, inputPath, outputDir, fileName)
 	}()
 
 	go func() {
@@ -160,7 +161,7 @@ func createMasterPlaylist(outputDir string, variants []string) error {
 	return nil
 }
 
-func extractAndSaveMetadata(ctx context.Context, client *ent.Client, videoID, inputPath string) {
+func extractAndSaveMetadata(ctx context.Context, client *ent.Client, videoID, inputPath, outputDir, originalFileName string) {
 	cmd := exec.Command("ffprobe", "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", inputPath)
 	output, err := cmd.Output()
 	if err != nil {
@@ -168,10 +169,46 @@ func extractAndSaveMetadata(ctx context.Context, client *ent.Client, videoID, in
 		return
 	}
 
-	var metadata map[string]interface{}
-	if err := json.Unmarshal(output, &metadata); err != nil {
-		log.Printf("Error unmarshalling metadata for video %s: %v", videoID, err)
+	var ffprobeResult struct {
+		Format struct {
+			Duration string `json:"duration"`
+		} `json:"format"`
+		Streams []struct {
+			CodecType  string `json:"codec_type"`
+			CodecName  string `json:"codec_name"`
+			Width      int    `json:"width"`
+			Height     int    `json:"height"`
+		} `json:"streams"`
+	}
+
+	if err := json.Unmarshal(output, &ffprobeResult); err != nil {
+		log.Printf("Error unmarshalling ffprobe result for video %s: %v", videoID, err)
 		return
+	}
+
+	duration, _ := strconv.ParseFloat(ffprobeResult.Format.Duration, 64)
+
+	var videoCodec, audioCodec string
+	var width, height int
+
+	for _, stream := range ffprobeResult.Streams {
+		if stream.CodecType == "video" {
+			videoCodec = stream.CodecName
+			width = stream.Width
+			height = stream.Height
+		} else if stream.CodecType == "audio" {
+			audioCodec = stream.CodecName
+		}
+	}
+
+	metadata := map[string]interface{}{
+		"original_name": originalFileName,
+		"duration_seconds": duration,
+		"width": width,
+		"height": height,
+		"video_codec": videoCodec,
+		"audio_codec": audioCodec,
+		"thumbnail_path": filepath.Join(outputDir, "thumbnail.jpg"),
 	}
 
 	_, err = client.File.UpdateOneID(videoID).SetMetadata(metadata).Save(ctx)

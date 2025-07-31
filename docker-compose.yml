@@ -9,4 +9,5 @@ services:
     env_file:
       - .env
     volumes:
+      - ./config.yaml:/app/config.yaml
       - /www/wwwroot/test/STREAMING-APP/uploads:/app/uploads

@@ -11,6 +11,7 @@ import (
 type Job struct {
 	VideoID   string
 	InputPath string
+	FileName  string // Adicionado para o nome original do arquivo
 }
 
 // JobQueue is a channel for sending jobs.
@@ -54,7 +55,7 @@ func (w Worker) Start() {
 }
 
 func (w Worker) transcode(job Job) {
-	tools.TranscodeAndProcessVideo(job.VideoID, job.InputPath, w.Client, w.AppConfig)
+	tools.TranscodeAndProcessVideo(job.VideoID, job.InputPath, job.FileName, w.Client, w.AppConfig)
 }
 
 // Stop signals the worker to stop.

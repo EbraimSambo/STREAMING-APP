@@ -61,6 +61,7 @@ func UploadVideo(c echo.Context, client *ent.Client) error {
 	job := worker.Job{
 		VideoID:   videoID,
 		InputPath: videoPath,
+		FileName:  file.Filename,
 	}
 	worker.JobQueue <- job
 
