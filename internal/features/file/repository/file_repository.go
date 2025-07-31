@@ -20,7 +20,7 @@ func NewFileRepository(clint *ent.Client) FileRepository {
 	return FileRepository{Client: clint}
 }
 
-func (r FileRepository) SaveFile(ctx context.Context, file string) (*string, error) {
+func (r FileRepository) SaveFile(ctx context.Context, videoID, fileName string) (*string, error) {
 
 	tx, err := r.Client.Tx(ctx)
 	if err != nil {
@@ -36,7 +36,9 @@ func (r FileRepository) SaveFile(ctx context.Context, file string) (*string, err
 
 	newFile, err := tx.File.
 		Create().
-		SetFile(file).
+		SetID(videoID).
+		SetFileName(fileName).
+		SetStatus("PENDING").
 		Save(ctx)
 
 	if err != nil {
@@ -49,7 +51,7 @@ func (r FileRepository) SaveFile(ctx context.Context, file string) (*string, err
 		return nil, err
 	}
 
-	return &newFile.File, nil
+	return &newFile.ID, nil
 }
 
 func (r FileRepository) ChangeVisibility(ctx context.Context, videoID string) (*string, error) {
@@ -68,7 +70,7 @@ func (r FileRepository) ChangeVisibility(ctx context.Context, videoID string) (*
 	_, err = tx.File.
 		Update().
 		Where(
-			file.File(videoID),
+			file.IDEQ(videoID),
 		).
 		SetVisibility(true).
 		Save(ctx)
@@ -151,7 +153,7 @@ func (r *FileRepository) GetFolderFiles(d DataParamsFiles) (*core.Pagination[ent
 
 func (r *FileRepository) GetFile(ctx context.Context, fileRef string) (*ent.File, error) {
 	return r.Client.File.Query().Where(
-		file.File(fileRef),
+		file.IDEQ(fileRef),
 		file.VisibilityEQ(true),
 	).First(ctx)
 }

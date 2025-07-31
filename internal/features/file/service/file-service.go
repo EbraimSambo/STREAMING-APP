@@ -15,8 +15,8 @@ func NewFileService(repo repository.FileRepository) FileService {
 	return FileService{Repo: repo}
 }
 
-func (s *FileService) SaveFile(ctx context.Context, file string) (*string, error) {
-	return s.Repo.SaveFile(ctx, file)
+func (s *FileService) SaveFile(ctx context.Context, videoID, fileName string) (*string, error) {
+	return s.Repo.SaveFile(ctx, videoID, fileName)
 }
 func (s *FileService) ChangeVisibility(ctx context.Context, fileRef string) (*string, error) {
 	return s.Repo.ChangeVisibility(ctx, fileRef)

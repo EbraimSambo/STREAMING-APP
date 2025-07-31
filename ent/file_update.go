@@ -28,16 +28,22 @@ func (fu *FileUpdate) Where(ps ...predicate.File) *FileUpdate {
 	return fu
 }
 
-// SetFile sets the "file" field.
-func (fu *FileUpdate) SetFile(s string) *FileUpdate {
-	fu.mutation.SetFile(s)
+// SetUpdateTime sets the "update_time" field.
+func (fu *FileUpdate) SetUpdateTime(t time.Time) *FileUpdate {
+	fu.mutation.SetUpdateTime(t)
 	return fu
 }
 
-// SetNillableFile sets the "file" field if the given value is not nil.
-func (fu *FileUpdate) SetNillableFile(s *string) *FileUpdate {
+// SetFileName sets the "file_name" field.
+func (fu *FileUpdate) SetFileName(s string) *FileUpdate {
+	fu.mutation.SetFileName(s)
+	return fu
+}
+
+// SetNillableFileName sets the "file_name" field if the given value is not nil.
+func (fu *FileUpdate) SetNillableFileName(s *string) *FileUpdate {
 	if s != nil {
-		fu.SetFile(*s)
+		fu.SetFileName(*s)
 	}
 	return fu
 }
@@ -53,6 +59,52 @@ func (fu *FileUpdate) SetNillableVisibility(b *bool) *FileUpdate {
 	if b != nil {
 		fu.SetVisibility(*b)
 	}
+	return fu
+}
+
+// SetStatus sets the "status" field.
+func (fu *FileUpdate) SetStatus(s string) *FileUpdate {
+	fu.mutation.SetStatus(s)
+	return fu
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (fu *FileUpdate) SetNillableStatus(s *string) *FileUpdate {
+	if s != nil {
+		fu.SetStatus(*s)
+	}
+	return fu
+}
+
+// SetStatusDetails sets the "status_details" field.
+func (fu *FileUpdate) SetStatusDetails(s string) *FileUpdate {
+	fu.mutation.SetStatusDetails(s)
+	return fu
+}
+
+// SetNillableStatusDetails sets the "status_details" field if the given value is not nil.
+func (fu *FileUpdate) SetNillableStatusDetails(s *string) *FileUpdate {
+	if s != nil {
+		fu.SetStatusDetails(*s)
+	}
+	return fu
+}
+
+// ClearStatusDetails clears the value of the "status_details" field.
+func (fu *FileUpdate) ClearStatusDetails() *FileUpdate {
+	fu.mutation.ClearStatusDetails()
+	return fu
+}
+
+// SetMetadata sets the "metadata" field.
+func (fu *FileUpdate) SetMetadata(m map[string]interface{}) *FileUpdate {
+	fu.mutation.SetMetadata(m)
+	return fu
+}
+
+// ClearMetadata clears the value of the "metadata" field.
+func (fu *FileUpdate) ClearMetadata() *FileUpdate {
+	fu.mutation.ClearMetadata()
 	return fu
 }
 
@@ -97,6 +149,7 @@ func (fu *FileUpdate) Mutation() *FileMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (fu *FileUpdate) Save(ctx context.Context) (int, error) {
+	fu.defaults()
 	return withHooks(ctx, fu.sqlSave, fu.mutation, fu.hooks)
 }
 
@@ -122,11 +175,19 @@ func (fu *FileUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (fu *FileUpdate) defaults() {
+	if _, ok := fu.mutation.UpdateTime(); !ok {
+		v := file.UpdateDefaultUpdateTime()
+		fu.mutation.SetUpdateTime(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (fu *FileUpdate) check() error {
-	if v, ok := fu.mutation.File(); ok {
-		if err := file.FileValidator(v); err != nil {
-			return &ValidationError{Name: "file", err: fmt.Errorf(`ent: validator failed for field "File.file": %w`, err)}
+	if v, ok := fu.mutation.FileName(); ok {
+		if err := file.FileNameValidator(v); err != nil {
+			return &ValidationError{Name: "file_name", err: fmt.Errorf(`ent: validator failed for field "File.file_name": %w`, err)}
 		}
 	}
 	return nil
@@ -136,7 +197,7 @@ func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := fu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(file.Table, file.Columns, sqlgraph.NewFieldSpec(file.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(file.Table, file.Columns, sqlgraph.NewFieldSpec(file.FieldID, field.TypeString))
 	if ps := fu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -144,11 +205,29 @@ func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := fu.mutation.File(); ok {
-		_spec.SetField(file.FieldFile, field.TypeString, value)
+	if value, ok := fu.mutation.UpdateTime(); ok {
+		_spec.SetField(file.FieldUpdateTime, field.TypeTime, value)
+	}
+	if value, ok := fu.mutation.FileName(); ok {
+		_spec.SetField(file.FieldFileName, field.TypeString, value)
 	}
 	if value, ok := fu.mutation.Visibility(); ok {
 		_spec.SetField(file.FieldVisibility, field.TypeBool, value)
+	}
+	if value, ok := fu.mutation.Status(); ok {
+		_spec.SetField(file.FieldStatus, field.TypeString, value)
+	}
+	if value, ok := fu.mutation.StatusDetails(); ok {
+		_spec.SetField(file.FieldStatusDetails, field.TypeString, value)
+	}
+	if fu.mutation.StatusDetailsCleared() {
+		_spec.ClearField(file.FieldStatusDetails, field.TypeString)
+	}
+	if value, ok := fu.mutation.Metadata(); ok {
+		_spec.SetField(file.FieldMetadata, field.TypeJSON, value)
+	}
+	if fu.mutation.MetadataCleared() {
+		_spec.ClearField(file.FieldMetadata, field.TypeJSON)
 	}
 	if value, ok := fu.mutation.CreatedAt(); ok {
 		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)
@@ -179,16 +258,22 @@ type FileUpdateOne struct {
 	mutation *FileMutation
 }
 
-// SetFile sets the "file" field.
-func (fuo *FileUpdateOne) SetFile(s string) *FileUpdateOne {
-	fuo.mutation.SetFile(s)
+// SetUpdateTime sets the "update_time" field.
+func (fuo *FileUpdateOne) SetUpdateTime(t time.Time) *FileUpdateOne {
+	fuo.mutation.SetUpdateTime(t)
 	return fuo
 }
 
-// SetNillableFile sets the "file" field if the given value is not nil.
-func (fuo *FileUpdateOne) SetNillableFile(s *string) *FileUpdateOne {
+// SetFileName sets the "file_name" field.
+func (fuo *FileUpdateOne) SetFileName(s string) *FileUpdateOne {
+	fuo.mutation.SetFileName(s)
+	return fuo
+}
+
+// SetNillableFileName sets the "file_name" field if the given value is not nil.
+func (fuo *FileUpdateOne) SetNillableFileName(s *string) *FileUpdateOne {
 	if s != nil {
-		fuo.SetFile(*s)
+		fuo.SetFileName(*s)
 	}
 	return fuo
 }
@@ -204,6 +289,52 @@ func (fuo *FileUpdateOne) SetNillableVisibility(b *bool) *FileUpdateOne {
 	if b != nil {
 		fuo.SetVisibility(*b)
 	}
+	return fuo
+}
+
+// SetStatus sets the "status" field.
+func (fuo *FileUpdateOne) SetStatus(s string) *FileUpdateOne {
+	fuo.mutation.SetStatus(s)
+	return fuo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (fuo *FileUpdateOne) SetNillableStatus(s *string) *FileUpdateOne {
+	if s != nil {
+		fuo.SetStatus(*s)
+	}
+	return fuo
+}
+
+// SetStatusDetails sets the "status_details" field.
+func (fuo *FileUpdateOne) SetStatusDetails(s string) *FileUpdateOne {
+	fuo.mutation.SetStatusDetails(s)
+	return fuo
+}
+
+// SetNillableStatusDetails sets the "status_details" field if the given value is not nil.
+func (fuo *FileUpdateOne) SetNillableStatusDetails(s *string) *FileUpdateOne {
+	if s != nil {
+		fuo.SetStatusDetails(*s)
+	}
+	return fuo
+}
+
+// ClearStatusDetails clears the value of the "status_details" field.
+func (fuo *FileUpdateOne) ClearStatusDetails() *FileUpdateOne {
+	fuo.mutation.ClearStatusDetails()
+	return fuo
+}
+
+// SetMetadata sets the "metadata" field.
+func (fuo *FileUpdateOne) SetMetadata(m map[string]interface{}) *FileUpdateOne {
+	fuo.mutation.SetMetadata(m)
+	return fuo
+}
+
+// ClearMetadata clears the value of the "metadata" field.
+func (fuo *FileUpdateOne) ClearMetadata() *FileUpdateOne {
+	fuo.mutation.ClearMetadata()
 	return fuo
 }
 
@@ -261,6 +392,7 @@ func (fuo *FileUpdateOne) Select(field string, fields ...string) *FileUpdateOne 
 
 // Save executes the query and returns the updated File entity.
 func (fuo *FileUpdateOne) Save(ctx context.Context) (*File, error) {
+	fuo.defaults()
 	return withHooks(ctx, fuo.sqlSave, fuo.mutation, fuo.hooks)
 }
 
@@ -286,11 +418,19 @@ func (fuo *FileUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (fuo *FileUpdateOne) defaults() {
+	if _, ok := fuo.mutation.UpdateTime(); !ok {
+		v := file.UpdateDefaultUpdateTime()
+		fuo.mutation.SetUpdateTime(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (fuo *FileUpdateOne) check() error {
-	if v, ok := fuo.mutation.File(); ok {
-		if err := file.FileValidator(v); err != nil {
-			return &ValidationError{Name: "file", err: fmt.Errorf(`ent: validator failed for field "File.file": %w`, err)}
+	if v, ok := fuo.mutation.FileName(); ok {
+		if err := file.FileNameValidator(v); err != nil {
+			return &ValidationError{Name: "file_name", err: fmt.Errorf(`ent: validator failed for field "File.file_name": %w`, err)}
 		}
 	}
 	return nil
@@ -300,7 +440,7 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 	if err := fuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(file.Table, file.Columns, sqlgraph.NewFieldSpec(file.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(file.Table, file.Columns, sqlgraph.NewFieldSpec(file.FieldID, field.TypeString))
 	id, ok := fuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "File.id" for update`)}
@@ -325,11 +465,29 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 			}
 		}
 	}
-	if value, ok := fuo.mutation.File(); ok {
-		_spec.SetField(file.FieldFile, field.TypeString, value)
+	if value, ok := fuo.mutation.UpdateTime(); ok {
+		_spec.SetField(file.FieldUpdateTime, field.TypeTime, value)
+	}
+	if value, ok := fuo.mutation.FileName(); ok {
+		_spec.SetField(file.FieldFileName, field.TypeString, value)
 	}
 	if value, ok := fuo.mutation.Visibility(); ok {
 		_spec.SetField(file.FieldVisibility, field.TypeBool, value)
+	}
+	if value, ok := fuo.mutation.Status(); ok {
+		_spec.SetField(file.FieldStatus, field.TypeString, value)
+	}
+	if value, ok := fuo.mutation.StatusDetails(); ok {
+		_spec.SetField(file.FieldStatusDetails, field.TypeString, value)
+	}
+	if fuo.mutation.StatusDetailsCleared() {
+		_spec.ClearField(file.FieldStatusDetails, field.TypeString)
+	}
+	if value, ok := fuo.mutation.Metadata(); ok {
+		_spec.SetField(file.FieldMetadata, field.TypeJSON, value)
+	}
+	if fuo.mutation.MetadataCleared() {
+		_spec.ClearField(file.FieldMetadata, field.TypeJSON)
 	}
 	if value, ok := fuo.mutation.CreatedAt(); ok {
 		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)

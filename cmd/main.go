@@ -1,8 +1,11 @@
 package main
 
 import (
+	"log"
+	"stream/internal/config"
 	"stream/internal/database"
 	"stream/internal/routes"
+	"stream/internal/worker"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -11,8 +14,18 @@ import (
 
 func main() {
 	_ = godotenv.Load()
+
+	cfg, err := config.LoadConfig("config.yaml")
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
 	database.Connect()
 	defer database.Client.Close()
+
+	// Start workers
+	worker.StartDispatcher(5, database.Client, cfg) // 5 workers, adjust as needed
+
 	e := echo.New()
 
 	// Habilita o CORS para todas as rotas

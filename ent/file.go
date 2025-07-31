@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"stream/ent/file"
 	"strings"
@@ -16,11 +17,21 @@ import (
 type File struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
-	// File holds the value of the "file" field.
-	File string `json:"file,omitempty"`
+	ID string `json:"id,omitempty"`
+	// CreateTime holds the value of the "create_time" field.
+	CreateTime time.Time `json:"create_time,omitempty"`
+	// UpdateTime holds the value of the "update_time" field.
+	UpdateTime time.Time `json:"update_time,omitempty"`
+	// FileName holds the value of the "file_name" field.
+	FileName string `json:"file_name,omitempty"`
 	// Visibility holds the value of the "visibility" field.
 	Visibility bool `json:"visibility,omitempty"`
+	// Status holds the value of the "status" field.
+	Status string `json:"status,omitempty"`
+	// StatusDetails holds the value of the "status_details" field.
+	StatusDetails string `json:"status_details,omitempty"`
+	// Metadata holds the value of the "metadata" field.
+	Metadata map[string]interface{} `json:"metadata,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
@@ -33,13 +44,13 @@ func (*File) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case file.FieldMetadata:
+			values[i] = new([]byte)
 		case file.FieldVisibility:
 			values[i] = new(sql.NullBool)
-		case file.FieldID:
-			values[i] = new(sql.NullInt64)
-		case file.FieldFile:
+		case file.FieldID, file.FieldFileName, file.FieldStatus, file.FieldStatusDetails:
 			values[i] = new(sql.NullString)
-		case file.FieldCreatedAt, file.FieldDeletedAt:
+		case file.FieldCreateTime, file.FieldUpdateTime, file.FieldCreatedAt, file.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -57,22 +68,54 @@ func (f *File) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case file.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
-			}
-			f.ID = int(value.Int64)
-		case file.FieldFile:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field file", values[i])
+				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
-				f.File = value.String
+				f.ID = value.String
+			}
+		case file.FieldCreateTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field create_time", values[i])
+			} else if value.Valid {
+				f.CreateTime = value.Time
+			}
+		case file.FieldUpdateTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field update_time", values[i])
+			} else if value.Valid {
+				f.UpdateTime = value.Time
+			}
+		case file.FieldFileName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field file_name", values[i])
+			} else if value.Valid {
+				f.FileName = value.String
 			}
 		case file.FieldVisibility:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field visibility", values[i])
 			} else if value.Valid {
 				f.Visibility = value.Bool
+			}
+		case file.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				f.Status = value.String
+			}
+		case file.FieldStatusDetails:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status_details", values[i])
+			} else if value.Valid {
+				f.StatusDetails = value.String
+			}
+		case file.FieldMetadata:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field metadata", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &f.Metadata); err != nil {
+					return fmt.Errorf("unmarshal field metadata: %w", err)
+				}
 			}
 		case file.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -122,11 +165,26 @@ func (f *File) String() string {
 	var builder strings.Builder
 	builder.WriteString("File(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", f.ID))
-	builder.WriteString("file=")
-	builder.WriteString(f.File)
+	builder.WriteString("create_time=")
+	builder.WriteString(f.CreateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("update_time=")
+	builder.WriteString(f.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("file_name=")
+	builder.WriteString(f.FileName)
 	builder.WriteString(", ")
 	builder.WriteString("visibility=")
 	builder.WriteString(fmt.Sprintf("%v", f.Visibility))
+	builder.WriteString(", ")
+	builder.WriteString("status=")
+	builder.WriteString(f.Status)
+	builder.WriteString(", ")
+	builder.WriteString("status_details=")
+	builder.WriteString(f.StatusDetails)
+	builder.WriteString(", ")
+	builder.WriteString("metadata=")
+	builder.WriteString(fmt.Sprintf("%v", f.Metadata))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(f.CreatedAt.Format(time.ANSIC))

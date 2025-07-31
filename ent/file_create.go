@@ -20,9 +20,37 @@ type FileCreate struct {
 	hooks    []Hook
 }
 
-// SetFile sets the "file" field.
-func (fc *FileCreate) SetFile(s string) *FileCreate {
-	fc.mutation.SetFile(s)
+// SetCreateTime sets the "create_time" field.
+func (fc *FileCreate) SetCreateTime(t time.Time) *FileCreate {
+	fc.mutation.SetCreateTime(t)
+	return fc
+}
+
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (fc *FileCreate) SetNillableCreateTime(t *time.Time) *FileCreate {
+	if t != nil {
+		fc.SetCreateTime(*t)
+	}
+	return fc
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (fc *FileCreate) SetUpdateTime(t time.Time) *FileCreate {
+	fc.mutation.SetUpdateTime(t)
+	return fc
+}
+
+// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
+func (fc *FileCreate) SetNillableUpdateTime(t *time.Time) *FileCreate {
+	if t != nil {
+		fc.SetUpdateTime(*t)
+	}
+	return fc
+}
+
+// SetFileName sets the "file_name" field.
+func (fc *FileCreate) SetFileName(s string) *FileCreate {
+	fc.mutation.SetFileName(s)
 	return fc
 }
 
@@ -37,6 +65,40 @@ func (fc *FileCreate) SetNillableVisibility(b *bool) *FileCreate {
 	if b != nil {
 		fc.SetVisibility(*b)
 	}
+	return fc
+}
+
+// SetStatus sets the "status" field.
+func (fc *FileCreate) SetStatus(s string) *FileCreate {
+	fc.mutation.SetStatus(s)
+	return fc
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (fc *FileCreate) SetNillableStatus(s *string) *FileCreate {
+	if s != nil {
+		fc.SetStatus(*s)
+	}
+	return fc
+}
+
+// SetStatusDetails sets the "status_details" field.
+func (fc *FileCreate) SetStatusDetails(s string) *FileCreate {
+	fc.mutation.SetStatusDetails(s)
+	return fc
+}
+
+// SetNillableStatusDetails sets the "status_details" field if the given value is not nil.
+func (fc *FileCreate) SetNillableStatusDetails(s *string) *FileCreate {
+	if s != nil {
+		fc.SetStatusDetails(*s)
+	}
+	return fc
+}
+
+// SetMetadata sets the "metadata" field.
+func (fc *FileCreate) SetMetadata(m map[string]interface{}) *FileCreate {
+	fc.mutation.SetMetadata(m)
 	return fc
 }
 
@@ -65,6 +127,12 @@ func (fc *FileCreate) SetNillableDeletedAt(t *time.Time) *FileCreate {
 	if t != nil {
 		fc.SetDeletedAt(*t)
 	}
+	return fc
+}
+
+// SetID sets the "id" field.
+func (fc *FileCreate) SetID(s string) *FileCreate {
+	fc.mutation.SetID(s)
 	return fc
 }
 
@@ -103,9 +171,21 @@ func (fc *FileCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (fc *FileCreate) defaults() {
+	if _, ok := fc.mutation.CreateTime(); !ok {
+		v := file.DefaultCreateTime()
+		fc.mutation.SetCreateTime(v)
+	}
+	if _, ok := fc.mutation.UpdateTime(); !ok {
+		v := file.DefaultUpdateTime()
+		fc.mutation.SetUpdateTime(v)
+	}
 	if _, ok := fc.mutation.Visibility(); !ok {
 		v := file.DefaultVisibility
 		fc.mutation.SetVisibility(v)
+	}
+	if _, ok := fc.mutation.Status(); !ok {
+		v := file.DefaultStatus
+		fc.mutation.SetStatus(v)
 	}
 	if _, ok := fc.mutation.CreatedAt(); !ok {
 		v := file.DefaultCreatedAt()
@@ -115,16 +195,25 @@ func (fc *FileCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (fc *FileCreate) check() error {
-	if _, ok := fc.mutation.File(); !ok {
-		return &ValidationError{Name: "file", err: errors.New(`ent: missing required field "File.file"`)}
+	if _, ok := fc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "File.create_time"`)}
 	}
-	if v, ok := fc.mutation.File(); ok {
-		if err := file.FileValidator(v); err != nil {
-			return &ValidationError{Name: "file", err: fmt.Errorf(`ent: validator failed for field "File.file": %w`, err)}
+	if _, ok := fc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "File.update_time"`)}
+	}
+	if _, ok := fc.mutation.FileName(); !ok {
+		return &ValidationError{Name: "file_name", err: errors.New(`ent: missing required field "File.file_name"`)}
+	}
+	if v, ok := fc.mutation.FileName(); ok {
+		if err := file.FileNameValidator(v); err != nil {
+			return &ValidationError{Name: "file_name", err: fmt.Errorf(`ent: validator failed for field "File.file_name": %w`, err)}
 		}
 	}
 	if _, ok := fc.mutation.Visibility(); !ok {
 		return &ValidationError{Name: "visibility", err: errors.New(`ent: missing required field "File.visibility"`)}
+	}
+	if _, ok := fc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "File.status"`)}
 	}
 	if _, ok := fc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "File.created_at"`)}
@@ -143,8 +232,13 @@ func (fc *FileCreate) sqlSave(ctx context.Context) (*File, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		if id, ok := _spec.ID.Value.(string); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected File.ID type: %T", _spec.ID.Value)
+		}
+	}
 	fc.mutation.id = &_node.ID
 	fc.mutation.done = true
 	return _node, nil
@@ -153,15 +247,39 @@ func (fc *FileCreate) sqlSave(ctx context.Context) (*File, error) {
 func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 	var (
 		_node = &File{config: fc.config}
-		_spec = sqlgraph.NewCreateSpec(file.Table, sqlgraph.NewFieldSpec(file.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(file.Table, sqlgraph.NewFieldSpec(file.FieldID, field.TypeString))
 	)
-	if value, ok := fc.mutation.File(); ok {
-		_spec.SetField(file.FieldFile, field.TypeString, value)
-		_node.File = value
+	if id, ok := fc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
+	if value, ok := fc.mutation.CreateTime(); ok {
+		_spec.SetField(file.FieldCreateTime, field.TypeTime, value)
+		_node.CreateTime = value
+	}
+	if value, ok := fc.mutation.UpdateTime(); ok {
+		_spec.SetField(file.FieldUpdateTime, field.TypeTime, value)
+		_node.UpdateTime = value
+	}
+	if value, ok := fc.mutation.FileName(); ok {
+		_spec.SetField(file.FieldFileName, field.TypeString, value)
+		_node.FileName = value
 	}
 	if value, ok := fc.mutation.Visibility(); ok {
 		_spec.SetField(file.FieldVisibility, field.TypeBool, value)
 		_node.Visibility = value
+	}
+	if value, ok := fc.mutation.Status(); ok {
+		_spec.SetField(file.FieldStatus, field.TypeString, value)
+		_node.Status = value
+	}
+	if value, ok := fc.mutation.StatusDetails(); ok {
+		_spec.SetField(file.FieldStatusDetails, field.TypeString, value)
+		_node.StatusDetails = value
+	}
+	if value, ok := fc.mutation.Metadata(); ok {
+		_spec.SetField(file.FieldMetadata, field.TypeJSON, value)
+		_node.Metadata = value
 	}
 	if value, ok := fc.mutation.CreatedAt(); ok {
 		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)
@@ -219,10 +337,6 @@ func (fcb *FileCreateBulk) Save(ctx context.Context) ([]*File, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				mutation.done = true
 				return nodes[i], nil
 			})

@@ -10,58 +10,88 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.File {
+func ID(id string) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.File {
+func IDEQ(id string) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.File {
+func IDNEQ(id string) predicate.File {
 	return predicate.File(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.File {
+func IDIn(ids ...string) predicate.File {
 	return predicate.File(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.File {
+func IDNotIn(ids ...string) predicate.File {
 	return predicate.File(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.File {
+func IDGT(id string) predicate.File {
 	return predicate.File(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.File {
+func IDGTE(id string) predicate.File {
 	return predicate.File(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.File {
+func IDLT(id string) predicate.File {
 	return predicate.File(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.File {
+func IDLTE(id string) predicate.File {
 	return predicate.File(sql.FieldLTE(FieldID, id))
 }
 
-// File applies equality check predicate on the "file" field. It's identical to FileEQ.
-func File(v string) predicate.File {
-	return predicate.File(sql.FieldEQ(FieldFile, v))
+// IDEqualFold applies the EqualFold predicate on the ID field.
+func IDEqualFold(id string) predicate.File {
+	return predicate.File(sql.FieldEqualFold(FieldID, id))
+}
+
+// IDContainsFold applies the ContainsFold predicate on the ID field.
+func IDContainsFold(id string) predicate.File {
+	return predicate.File(sql.FieldContainsFold(FieldID, id))
+}
+
+// CreateTime applies equality check predicate on the "create_time" field. It's identical to CreateTimeEQ.
+func CreateTime(v time.Time) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldCreateTime, v))
+}
+
+// UpdateTime applies equality check predicate on the "update_time" field. It's identical to UpdateTimeEQ.
+func UpdateTime(v time.Time) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldUpdateTime, v))
+}
+
+// FileName applies equality check predicate on the "file_name" field. It's identical to FileNameEQ.
+func FileName(v string) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldFileName, v))
 }
 
 // Visibility applies equality check predicate on the "visibility" field. It's identical to VisibilityEQ.
 func Visibility(v bool) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldVisibility, v))
+}
+
+// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
+func Status(v string) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldStatus, v))
+}
+
+// StatusDetails applies equality check predicate on the "status_details" field. It's identical to StatusDetailsEQ.
+func StatusDetails(v string) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldStatusDetails, v))
 }
 
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
@@ -74,69 +104,149 @@ func DeletedAt(v time.Time) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// FileEQ applies the EQ predicate on the "file" field.
-func FileEQ(v string) predicate.File {
-	return predicate.File(sql.FieldEQ(FieldFile, v))
+// CreateTimeEQ applies the EQ predicate on the "create_time" field.
+func CreateTimeEQ(v time.Time) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldCreateTime, v))
 }
 
-// FileNEQ applies the NEQ predicate on the "file" field.
-func FileNEQ(v string) predicate.File {
-	return predicate.File(sql.FieldNEQ(FieldFile, v))
+// CreateTimeNEQ applies the NEQ predicate on the "create_time" field.
+func CreateTimeNEQ(v time.Time) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldCreateTime, v))
 }
 
-// FileIn applies the In predicate on the "file" field.
-func FileIn(vs ...string) predicate.File {
-	return predicate.File(sql.FieldIn(FieldFile, vs...))
+// CreateTimeIn applies the In predicate on the "create_time" field.
+func CreateTimeIn(vs ...time.Time) predicate.File {
+	return predicate.File(sql.FieldIn(FieldCreateTime, vs...))
 }
 
-// FileNotIn applies the NotIn predicate on the "file" field.
-func FileNotIn(vs ...string) predicate.File {
-	return predicate.File(sql.FieldNotIn(FieldFile, vs...))
+// CreateTimeNotIn applies the NotIn predicate on the "create_time" field.
+func CreateTimeNotIn(vs ...time.Time) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldCreateTime, vs...))
 }
 
-// FileGT applies the GT predicate on the "file" field.
-func FileGT(v string) predicate.File {
-	return predicate.File(sql.FieldGT(FieldFile, v))
+// CreateTimeGT applies the GT predicate on the "create_time" field.
+func CreateTimeGT(v time.Time) predicate.File {
+	return predicate.File(sql.FieldGT(FieldCreateTime, v))
 }
 
-// FileGTE applies the GTE predicate on the "file" field.
-func FileGTE(v string) predicate.File {
-	return predicate.File(sql.FieldGTE(FieldFile, v))
+// CreateTimeGTE applies the GTE predicate on the "create_time" field.
+func CreateTimeGTE(v time.Time) predicate.File {
+	return predicate.File(sql.FieldGTE(FieldCreateTime, v))
 }
 
-// FileLT applies the LT predicate on the "file" field.
-func FileLT(v string) predicate.File {
-	return predicate.File(sql.FieldLT(FieldFile, v))
+// CreateTimeLT applies the LT predicate on the "create_time" field.
+func CreateTimeLT(v time.Time) predicate.File {
+	return predicate.File(sql.FieldLT(FieldCreateTime, v))
 }
 
-// FileLTE applies the LTE predicate on the "file" field.
-func FileLTE(v string) predicate.File {
-	return predicate.File(sql.FieldLTE(FieldFile, v))
+// CreateTimeLTE applies the LTE predicate on the "create_time" field.
+func CreateTimeLTE(v time.Time) predicate.File {
+	return predicate.File(sql.FieldLTE(FieldCreateTime, v))
 }
 
-// FileContains applies the Contains predicate on the "file" field.
-func FileContains(v string) predicate.File {
-	return predicate.File(sql.FieldContains(FieldFile, v))
+// UpdateTimeEQ applies the EQ predicate on the "update_time" field.
+func UpdateTimeEQ(v time.Time) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldUpdateTime, v))
 }
 
-// FileHasPrefix applies the HasPrefix predicate on the "file" field.
-func FileHasPrefix(v string) predicate.File {
-	return predicate.File(sql.FieldHasPrefix(FieldFile, v))
+// UpdateTimeNEQ applies the NEQ predicate on the "update_time" field.
+func UpdateTimeNEQ(v time.Time) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldUpdateTime, v))
 }
 
-// FileHasSuffix applies the HasSuffix predicate on the "file" field.
-func FileHasSuffix(v string) predicate.File {
-	return predicate.File(sql.FieldHasSuffix(FieldFile, v))
+// UpdateTimeIn applies the In predicate on the "update_time" field.
+func UpdateTimeIn(vs ...time.Time) predicate.File {
+	return predicate.File(sql.FieldIn(FieldUpdateTime, vs...))
 }
 
-// FileEqualFold applies the EqualFold predicate on the "file" field.
-func FileEqualFold(v string) predicate.File {
-	return predicate.File(sql.FieldEqualFold(FieldFile, v))
+// UpdateTimeNotIn applies the NotIn predicate on the "update_time" field.
+func UpdateTimeNotIn(vs ...time.Time) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldUpdateTime, vs...))
 }
 
-// FileContainsFold applies the ContainsFold predicate on the "file" field.
-func FileContainsFold(v string) predicate.File {
-	return predicate.File(sql.FieldContainsFold(FieldFile, v))
+// UpdateTimeGT applies the GT predicate on the "update_time" field.
+func UpdateTimeGT(v time.Time) predicate.File {
+	return predicate.File(sql.FieldGT(FieldUpdateTime, v))
+}
+
+// UpdateTimeGTE applies the GTE predicate on the "update_time" field.
+func UpdateTimeGTE(v time.Time) predicate.File {
+	return predicate.File(sql.FieldGTE(FieldUpdateTime, v))
+}
+
+// UpdateTimeLT applies the LT predicate on the "update_time" field.
+func UpdateTimeLT(v time.Time) predicate.File {
+	return predicate.File(sql.FieldLT(FieldUpdateTime, v))
+}
+
+// UpdateTimeLTE applies the LTE predicate on the "update_time" field.
+func UpdateTimeLTE(v time.Time) predicate.File {
+	return predicate.File(sql.FieldLTE(FieldUpdateTime, v))
+}
+
+// FileNameEQ applies the EQ predicate on the "file_name" field.
+func FileNameEQ(v string) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldFileName, v))
+}
+
+// FileNameNEQ applies the NEQ predicate on the "file_name" field.
+func FileNameNEQ(v string) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldFileName, v))
+}
+
+// FileNameIn applies the In predicate on the "file_name" field.
+func FileNameIn(vs ...string) predicate.File {
+	return predicate.File(sql.FieldIn(FieldFileName, vs...))
+}
+
+// FileNameNotIn applies the NotIn predicate on the "file_name" field.
+func FileNameNotIn(vs ...string) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldFileName, vs...))
+}
+
+// FileNameGT applies the GT predicate on the "file_name" field.
+func FileNameGT(v string) predicate.File {
+	return predicate.File(sql.FieldGT(FieldFileName, v))
+}
+
+// FileNameGTE applies the GTE predicate on the "file_name" field.
+func FileNameGTE(v string) predicate.File {
+	return predicate.File(sql.FieldGTE(FieldFileName, v))
+}
+
+// FileNameLT applies the LT predicate on the "file_name" field.
+func FileNameLT(v string) predicate.File {
+	return predicate.File(sql.FieldLT(FieldFileName, v))
+}
+
+// FileNameLTE applies the LTE predicate on the "file_name" field.
+func FileNameLTE(v string) predicate.File {
+	return predicate.File(sql.FieldLTE(FieldFileName, v))
+}
+
+// FileNameContains applies the Contains predicate on the "file_name" field.
+func FileNameContains(v string) predicate.File {
+	return predicate.File(sql.FieldContains(FieldFileName, v))
+}
+
+// FileNameHasPrefix applies the HasPrefix predicate on the "file_name" field.
+func FileNameHasPrefix(v string) predicate.File {
+	return predicate.File(sql.FieldHasPrefix(FieldFileName, v))
+}
+
+// FileNameHasSuffix applies the HasSuffix predicate on the "file_name" field.
+func FileNameHasSuffix(v string) predicate.File {
+	return predicate.File(sql.FieldHasSuffix(FieldFileName, v))
+}
+
+// FileNameEqualFold applies the EqualFold predicate on the "file_name" field.
+func FileNameEqualFold(v string) predicate.File {
+	return predicate.File(sql.FieldEqualFold(FieldFileName, v))
+}
+
+// FileNameContainsFold applies the ContainsFold predicate on the "file_name" field.
+func FileNameContainsFold(v string) predicate.File {
+	return predicate.File(sql.FieldContainsFold(FieldFileName, v))
 }
 
 // VisibilityEQ applies the EQ predicate on the "visibility" field.
@@ -147,6 +257,156 @@ func VisibilityEQ(v bool) predicate.File {
 // VisibilityNEQ applies the NEQ predicate on the "visibility" field.
 func VisibilityNEQ(v bool) predicate.File {
 	return predicate.File(sql.FieldNEQ(FieldVisibility, v))
+}
+
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v string) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldStatus, v))
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v string) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldStatus, v))
+}
+
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...string) predicate.File {
+	return predicate.File(sql.FieldIn(FieldStatus, vs...))
+}
+
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...string) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// StatusGT applies the GT predicate on the "status" field.
+func StatusGT(v string) predicate.File {
+	return predicate.File(sql.FieldGT(FieldStatus, v))
+}
+
+// StatusGTE applies the GTE predicate on the "status" field.
+func StatusGTE(v string) predicate.File {
+	return predicate.File(sql.FieldGTE(FieldStatus, v))
+}
+
+// StatusLT applies the LT predicate on the "status" field.
+func StatusLT(v string) predicate.File {
+	return predicate.File(sql.FieldLT(FieldStatus, v))
+}
+
+// StatusLTE applies the LTE predicate on the "status" field.
+func StatusLTE(v string) predicate.File {
+	return predicate.File(sql.FieldLTE(FieldStatus, v))
+}
+
+// StatusContains applies the Contains predicate on the "status" field.
+func StatusContains(v string) predicate.File {
+	return predicate.File(sql.FieldContains(FieldStatus, v))
+}
+
+// StatusHasPrefix applies the HasPrefix predicate on the "status" field.
+func StatusHasPrefix(v string) predicate.File {
+	return predicate.File(sql.FieldHasPrefix(FieldStatus, v))
+}
+
+// StatusHasSuffix applies the HasSuffix predicate on the "status" field.
+func StatusHasSuffix(v string) predicate.File {
+	return predicate.File(sql.FieldHasSuffix(FieldStatus, v))
+}
+
+// StatusEqualFold applies the EqualFold predicate on the "status" field.
+func StatusEqualFold(v string) predicate.File {
+	return predicate.File(sql.FieldEqualFold(FieldStatus, v))
+}
+
+// StatusContainsFold applies the ContainsFold predicate on the "status" field.
+func StatusContainsFold(v string) predicate.File {
+	return predicate.File(sql.FieldContainsFold(FieldStatus, v))
+}
+
+// StatusDetailsEQ applies the EQ predicate on the "status_details" field.
+func StatusDetailsEQ(v string) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldStatusDetails, v))
+}
+
+// StatusDetailsNEQ applies the NEQ predicate on the "status_details" field.
+func StatusDetailsNEQ(v string) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldStatusDetails, v))
+}
+
+// StatusDetailsIn applies the In predicate on the "status_details" field.
+func StatusDetailsIn(vs ...string) predicate.File {
+	return predicate.File(sql.FieldIn(FieldStatusDetails, vs...))
+}
+
+// StatusDetailsNotIn applies the NotIn predicate on the "status_details" field.
+func StatusDetailsNotIn(vs ...string) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldStatusDetails, vs...))
+}
+
+// StatusDetailsGT applies the GT predicate on the "status_details" field.
+func StatusDetailsGT(v string) predicate.File {
+	return predicate.File(sql.FieldGT(FieldStatusDetails, v))
+}
+
+// StatusDetailsGTE applies the GTE predicate on the "status_details" field.
+func StatusDetailsGTE(v string) predicate.File {
+	return predicate.File(sql.FieldGTE(FieldStatusDetails, v))
+}
+
+// StatusDetailsLT applies the LT predicate on the "status_details" field.
+func StatusDetailsLT(v string) predicate.File {
+	return predicate.File(sql.FieldLT(FieldStatusDetails, v))
+}
+
+// StatusDetailsLTE applies the LTE predicate on the "status_details" field.
+func StatusDetailsLTE(v string) predicate.File {
+	return predicate.File(sql.FieldLTE(FieldStatusDetails, v))
+}
+
+// StatusDetailsContains applies the Contains predicate on the "status_details" field.
+func StatusDetailsContains(v string) predicate.File {
+	return predicate.File(sql.FieldContains(FieldStatusDetails, v))
+}
+
+// StatusDetailsHasPrefix applies the HasPrefix predicate on the "status_details" field.
+func StatusDetailsHasPrefix(v string) predicate.File {
+	return predicate.File(sql.FieldHasPrefix(FieldStatusDetails, v))
+}
+
+// StatusDetailsHasSuffix applies the HasSuffix predicate on the "status_details" field.
+func StatusDetailsHasSuffix(v string) predicate.File {
+	return predicate.File(sql.FieldHasSuffix(FieldStatusDetails, v))
+}
+
+// StatusDetailsIsNil applies the IsNil predicate on the "status_details" field.
+func StatusDetailsIsNil() predicate.File {
+	return predicate.File(sql.FieldIsNull(FieldStatusDetails))
+}
+
+// StatusDetailsNotNil applies the NotNil predicate on the "status_details" field.
+func StatusDetailsNotNil() predicate.File {
+	return predicate.File(sql.FieldNotNull(FieldStatusDetails))
+}
+
+// StatusDetailsEqualFold applies the EqualFold predicate on the "status_details" field.
+func StatusDetailsEqualFold(v string) predicate.File {
+	return predicate.File(sql.FieldEqualFold(FieldStatusDetails, v))
+}
+
+// StatusDetailsContainsFold applies the ContainsFold predicate on the "status_details" field.
+func StatusDetailsContainsFold(v string) predicate.File {
+	return predicate.File(sql.FieldContainsFold(FieldStatusDetails, v))
+}
+
+// MetadataIsNil applies the IsNil predicate on the "metadata" field.
+func MetadataIsNil() predicate.File {
+	return predicate.File(sql.FieldIsNull(FieldMetadata))
+}
+
+// MetadataNotNil applies the NotNil predicate on the "metadata" field.
+func MetadataNotNil() predicate.File {
+	return predicate.File(sql.FieldNotNull(FieldMetadata))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

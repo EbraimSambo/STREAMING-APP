@@ -1,0 +1,38 @@
+transcoding:
+  qualities:
+    - name: "1080p"
+      width: 1920
+      height: 1080
+      bitrate: 5000
+    - name: "720p"
+      width: 1280
+      height: 720
+      bitrate: 3000
+    - name: "480p"
+      width: 854
+      height: 480
+      bitrate: 1000
+
+  ffmpeg_params:
+    - "-c:a"
+    - "aac"
+    - "-ar"
+    - "48000"
+    - "-c:v"
+    - "h264"
+    - "-profile:v"
+    - "main"
+    - "-crf"
+    - "20"
+    - "-sc_threshold"
+    - "0"
+    - "-g"
+    - "48"
+    - "-keyint_min"
+    - "48"
+    - "-hls_time"
+    - "4"
+    - "-hls_playlist_type"
+    - "vod"
+    - "-b:a"
+    - "128k"

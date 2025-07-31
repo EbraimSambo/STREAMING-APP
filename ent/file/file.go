@@ -13,10 +13,20 @@ const (
 	Label = "file"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldFile holds the string denoting the file field in the database.
-	FieldFile = "file"
+	// FieldCreateTime holds the string denoting the create_time field in the database.
+	FieldCreateTime = "create_time"
+	// FieldUpdateTime holds the string denoting the update_time field in the database.
+	FieldUpdateTime = "update_time"
+	// FieldFileName holds the string denoting the file_name field in the database.
+	FieldFileName = "file_name"
 	// FieldVisibility holds the string denoting the visibility field in the database.
 	FieldVisibility = "visibility"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
+	// FieldStatusDetails holds the string denoting the status_details field in the database.
+	FieldStatusDetails = "status_details"
+	// FieldMetadata holds the string denoting the metadata field in the database.
+	FieldMetadata = "metadata"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
@@ -28,8 +38,13 @@ const (
 // Columns holds all SQL columns for file fields.
 var Columns = []string{
 	FieldID,
-	FieldFile,
+	FieldCreateTime,
+	FieldUpdateTime,
+	FieldFileName,
 	FieldVisibility,
+	FieldStatus,
+	FieldStatusDetails,
+	FieldMetadata,
 	FieldCreatedAt,
 	FieldDeletedAt,
 }
@@ -45,10 +60,18 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// FileValidator is a validator for the "file" field. It is called by the builders before save.
-	FileValidator func(string) error
+	// DefaultCreateTime holds the default value on creation for the "create_time" field.
+	DefaultCreateTime func() time.Time
+	// DefaultUpdateTime holds the default value on creation for the "update_time" field.
+	DefaultUpdateTime func() time.Time
+	// UpdateDefaultUpdateTime holds the default value on update for the "update_time" field.
+	UpdateDefaultUpdateTime func() time.Time
+	// FileNameValidator is a validator for the "file_name" field. It is called by the builders before save.
+	FileNameValidator func(string) error
 	// DefaultVisibility holds the default value on creation for the "visibility" field.
 	DefaultVisibility bool
+	// DefaultStatus holds the default value on creation for the "status" field.
+	DefaultStatus string
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 )
@@ -61,14 +84,34 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByFile orders the results by the file field.
-func ByFile(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldFile, opts...).ToFunc()
+// ByCreateTime orders the results by the create_time field.
+func ByCreateTime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreateTime, opts...).ToFunc()
+}
+
+// ByUpdateTime orders the results by the update_time field.
+func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdateTime, opts...).ToFunc()
+}
+
+// ByFileName orders the results by the file_name field.
+func ByFileName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFileName, opts...).ToFunc()
 }
 
 // ByVisibility orders the results by the visibility field.
 func ByVisibility(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldVisibility, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByStatusDetails orders the results by the status_details field.
+func ByStatusDetails(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatusDetails, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.
